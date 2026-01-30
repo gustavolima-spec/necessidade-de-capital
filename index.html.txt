@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Simulador de Necessidade de Capital</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+    }
+
+    .container {
+        max-width: 520px;
+        background: #fff;
+        margin: 40px auto;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .logo {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .logo img {
+        max-width: 180px;
+    }
+
+    h2 {
+        text-align: center;
+        font-weight: normal;
+        color: #333;
+        margin-bottom: 30px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 6px;
+        color: #444;
+        font-size: 14px;
+    }
+
+    .input-padrao {
+        width: 100%;
+        height: 48px;
+        padding: 12px;
+        margin-bottom: 18px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 15px;
+        box-sizing: border-box;
+    }
+
+    .input-padrao[readonly] {
+        background: #f7f7f7;
+        color: #555;
+    }
+
+    button {
+        width: 100%;
+        height: 52px;
+        background: #e53935;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .resultado {
+        margin-top: 25px;
+        border-top: 1px solid #ddd;
+        padding-top: 20px;
+    }
+
+    .box {
+        background: #fafafa;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 15px;
+        font-size: 14px;
+    }
+
+    .box span {
+        color: #e53935;
+        font-weight: bold;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="logo">
+        <img src="https://usibras.com/wp-content/uploads/2024/01/Logo-FAN-Capital-Prioritaria.png">
+    </div>
+
+    <h2>Simulador de Necessidade de Capital</h2>
+
+    <label>Faturamento anual (12 meses fechados)</label>
+    <input type="text" id="faturamento" class="input-padrao" value="R$ 7.000.000,00">
+
+    <label>Prazo médio do cliente (dias)</label>
+    <input type="number" id="prazo" class="input-padrao" value="45">
+
+    <label>Média mensal de faturamento</label>
+    <input type="text" id="mediaMensal" class="input-padrao" readonly>
+
+    <button onclick="calcular()">Calcular</button>
+
+    <div class="resultado">
+        <p>Necessidade de capital: <strong id="necessidade">R$ 0,00</strong></p>
+
+        <div class="box">
+            <strong>Limites Sugeridos</strong><br><br>
+            10% → <span id="l10">R$ 0,00</span><br>
+            20% → <span id="l20">R$ 0,00</span><br>
+            30% → <span id="l30">R$ 0,00</span> (Limite máximo sugerido)
+        </div>
+    </div>
+
+</div>
+
+<script>
+function parseMoeda(valor) {
+    if (!valor) return 0;
+    return Number(
+        valor.replace(/\s/g, '')
+             .replace('R$', '')
+             .replace(/\./g, '')
+             .replace(',', '.')
+    );
+}
+
+function formatMoeda(valor) {
+    return valor.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    });
+}
+
+function atualizarMediaMensal() {
+    const faturamento = parseMoeda(document.getElementById('faturamento').value);
+    const media = faturamento / 12;
+    document.getElementById('mediaMensal').value = formatMoeda(media);
+}
+
+function calcular() {
+    const faturamento = parseMoeda(document.getElementById('faturamento').value);
+    const prazo = Number(document.getElementById('prazo').value);
+
+    atualizarMediaMensal();
+
+    const necessidade = (faturamento / 360) * prazo;
+
+    document.getElementById('necessidade').innerText = formatMoeda(necessidade);
+    document.getElementById('l10').innerText = formatMoeda(necessidade * 0.10);
+    document.getElementById('l20').innerText = formatMoeda(necessidade * 0.20);
+    document.getElementById('l30').innerText = formatMoeda(necessidade * 0.30);
+}
+
+// garante cálculo inicial
+window.onload = atualizarMediaMensal;
+
+// recalcula ao digitar
+document.getElementById('faturamento')
+    .addEventListener('keyup', atualizarMediaMensal);
+</script>
+
+</body>
+</html>
