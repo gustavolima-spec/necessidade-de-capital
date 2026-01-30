@@ -2,117 +2,91 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Simulador de Operações | FAN Capital</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<title>Simulador de Necessidade de Capital</title>
 
 <style>
-body {
-    margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    background: #f2f2f2;
-}
-
-.container {
-    background: #ffffff;
-    width: 100%;
-    max-width: 520px;
-    margin: 0 auto;
-    padding: 28px 24px;
-    min-height: 100vh;
-}
-
-.logo-img {
-    text-align: center;
-    margin-bottom: 6px;
-}
-
-.logo-img img {
-    max-width: 220px;
-    width: 80%;
-    height: auto;
-}
-
-h2 {
-    text-align: center;
-    font-weight: normal;
-    margin-top: 4px;
-    margin-bottom: 22px;
-    color: #333;
-}
-
-label {
-    display: block;
-    margin-top: 16px;
-    font-size: 14px;
-    color: #555;
-}
-
-input,
-button {
-    width: 100%;
-    box-sizing: border-box;
-}
-
-input {
-    padding: 16px;
-    margin-top: 6px;
-    font-size: 16px;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-}
-
-button {
-    padding: 16px;
-    margin-top: 24px;
-    font-size: 17px;
-    border: none;
-    border-radius: 10px;
-    background: #e53935;
-    color: #fff;
-    cursor: pointer;
-}
-
-button.secondary {
-    background: #555;
-    margin-top: 14px;
-}
-
-.resultado {
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px solid #ddd;
-    font-size: 16px;
-}
-
-.valor {
-    color: #e53935;
-    font-weight: bold;
-}
-
-.breakdown {
-    margin-top: 20px;
-    background: #fafafa;
-    padding: 16px;
-    border-radius: 10px;
-    font-size: 14px;
-    color: #444;
-}
-
-@media (min-width: 768px) {
     body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
     }
 
     .container {
-        border-radius: 16px;
-        box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-        min-height: auto;
+        max-width: 520px;
+        background: #fff;
+        margin: 40px auto;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     }
-}
+
+    .logo {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .logo img {
+        max-width: 180px;
+    }
+
+    h2 {
+        text-align: center;
+        font-weight: normal;
+        color: #333;
+        margin-bottom: 30px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 6px;
+        color: #444;
+        font-size: 14px;
+    }
+
+    .input-padrao {
+        width: 100%;
+        height: 48px;
+        padding: 12px;
+        margin-bottom: 18px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 15px;
+        box-sizing: border-box;
+    }
+
+    .input-padrao[readonly] {
+        background: #f7f7f7;
+        color: #555;
+    }
+
+    button {
+        width: 100%;
+        height: 52px;
+        background: #e53935;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .resultado {
+        margin-top: 25px;
+        border-top: 1px solid #ddd;
+        padding-top: 20px;
+    }
+
+    .box {
+        background: #fafafa;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 15px;
+        font-size: 14px;
+    }
+
+    .box span {
+        color: #e53935;
+        font-weight: bold;
+    }
 </style>
 </head>
 
@@ -120,130 +94,80 @@ button.secondary {
 
 <div class="container">
 
-    <div class="logo-img">
-        <img src="https://fancapital.com.br/wp-content/uploads/2025/07/download_-3-1889x1080.png" alt="FAN Capital">
+    <div class="logo">
+        <img src="https://usibras.com/wp-content/uploads/2024/01/Logo-FAN-Capital-Prioritaria.png">
     </div>
 
-    <h2>Simulador de Operações</h2>
+    <h2>Simulador de Necessidade de Capital</h2>
 
-    <label>Valor bruto da operação</label>
-    <input id="valorBruto" placeholder="R$ 0,00" oninput="mascaraMoeda(this)">
+    <label>Faturamento anual (12 meses fechados)</label>
+    <input type="text" id="faturamento" class="input-padrao" value="R$ 7.000.000,00">
 
-    <label>Taxa de juros (% ao mês)</label>
-    <input id="taxa" placeholder="0,00" oninput="mascaraPercentual(this)">
+    <label>Prazo médio do cliente (dias)</label>
+    <input type="number" id="prazo" class="input-padrao" value="45">
 
-    <label>Prazo médio (dias)</label>
-    <input id="prazo" placeholder="0,00" oninput="mascaraDecimal2(this)">
+    <label>Média mensal de faturamento</label>
+    <input type="text" id="mediaMensal" class="input-padrao" readonly>
 
-    <button onclick="simular()">Simular operação</button>
-    <button class="secondary" onclick="gerarPDF()">Exportar PDF</button>
+    <button onclick="calcular()">Calcular</button>
 
     <div class="resultado">
-        Receita operacional:
-        <span class="valor" id="receita">R$ 0,00</span><br><br>
-        Valor líquido da operação:
-        <span class="valor" id="liquido">R$ 0,00</span>
-    </div>
+        <p>Necessidade de capital: <strong id="necessidade">R$ 0,00</strong></p>
 
-    <div class="breakdown" id="breakdown">
-        <strong>Breakdown do cálculo</strong><br><br>
-        Preencha os campos e clique em <b>Simular operação</b>.
+        <div class="box">
+            <strong>Limites Sugeridos</strong><br><br>
+            10% → <span id="l10">R$ 0,00</span><br>
+            20% → <span id="l20">R$ 0,00</span><br>
+            30% → <span id="l30">R$ 0,00</span> (Limite máximo sugerido)
+        </div>
     </div>
 
 </div>
 
 <script>
-function mascaraMoeda(campo) {
-    let v = campo.value.replace(/\D/g,'');
-    v = (v / 100).toFixed(2);
-    v = v.replace('.', ',');
-    v = v.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    campo.value = 'R$ ' + v;
+function parseMoeda(valor) {
+    if (!valor) return 0;
+    return Number(
+        valor.replace(/\s/g, '')
+             .replace('R$', '')
+             .replace(/\./g, '')
+             .replace(',', '.')
+    );
 }
 
-function mascaraPercentual(campo) {
-    let v = campo.value.replace(/\D/g,'');
-    v = (v / 100).toFixed(2).replace('.', ',');
-    campo.value = v;
+function formatMoeda(valor) {
+    return valor.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    });
 }
 
-function mascaraDecimal2(campo) {
-    let v = campo.value.replace(/\D/g,'');
-    v = (v / 100).toFixed(2).replace('.', ',');
-    campo.value = v;
+function atualizarMediaMensal() {
+    const faturamento = parseMoeda(document.getElementById('faturamento').value);
+    const media = faturamento / 12;
+    document.getElementById('mediaMensal').value = formatMoeda(media);
 }
 
-function parseMoeda(v) {
-    return parseFloat(v.replace(/[R$\s.]/g,'').replace(',','.')) || 0;
+function calcular() {
+    const faturamento = parseMoeda(document.getElementById('faturamento').value);
+    const prazo = Number(document.getElementById('prazo').value);
+
+    atualizarMediaMensal();
+
+    const necessidade = (faturamento / 360) * prazo;
+
+    document.getElementById('necessidade').innerText = formatMoeda(necessidade);
+    document.getElementById('l10').innerText = formatMoeda(necessidade * 0.10);
+    document.getElementById('l20').innerText = formatMoeda(necessidade * 0.20);
+    document.getElementById('l30').innerText = formatMoeda(necessidade * 0.30);
 }
 
-function parseDecimal(v) {
-    return parseFloat(v.replace(',','.')) || 0;
-}
+// garante cálculo inicial
+window.onload = atualizarMediaMensal;
 
-function moeda(v) {
-    return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-}
-
-let dados = {};
-
-function simular() {
-    const bruto = parseMoeda(valorBruto.value);
-    const taxaMes = parseDecimal(taxa.value) / 100;
-    const prazoDias = parseDecimal(prazo.value);
-
-    if (bruto <= 0 || taxaMes <= 0 || prazoDias <= 0) {
-        alert("Preencha todos os campos corretamente.");
-        return;
-    }
-
-    const taxaDia = taxaMes / 30;
-    const receita = taxaDia * prazoDias * bruto;
-    const liquido = bruto - receita;
-
-    document.getElementById("receita").innerText = moeda(receita);
-    document.getElementById("liquido").innerText = moeda(liquido);
-
-    document.getElementById("breakdown").innerHTML = `
-        <strong>Breakdown do cálculo</strong><br><br>
-        Valor bruto da operação: ${moeda(bruto)}<br>
-        Taxa mensal: ${(taxaMes * 100).toFixed(2)}%<br>
-        Taxa diária equivalente: ${(taxaDia * 100).toFixed(4)}%<br>
-        Prazo médio: ${prazoDias.toFixed(2)} dias<br><br>
-        Receita operacional apurada no período.<br>
-        Valor líquido calculado após a dedução da receita.
-    `;
-
-    dados = { bruto, taxaMes, prazoDias, receita, liquido };
-}
-
-function gerarPDF() {
-    if (!dados.bruto) {
-        alert("Faça a simulação antes de exportar.");
-        return;
-    }
-
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF();
-
-    pdf.text("FAN Capital", 20, 20);
-    pdf.text("Simulador de Operações", 20, 30);
-
-    pdf.text(`Valor Bruto: ${moeda(dados.bruto)}`, 20, 50);
-    pdf.text(`Taxa Mensal: ${(dados.taxaMes * 100).toFixed(2)}%`, 20, 60);
-    pdf.text(`Prazo Médio: ${dados.prazoDias.toFixed(2)} dias`, 20, 70);
-    pdf.text(`Receita Operacional: ${moeda(dados.receita)}`, 20, 90);
-    pdf.text(`Valor Líquido: ${moeda(dados.liquido)}`, 20, 100);
-
-    pdf.save("simulacao-operacao-fan-capital.pdf");
-}
-
-// garante que a página sempre abra limpa
-window.onload = () => {
-    valorBruto.value = "";
-    taxa.value = "";
-    prazo.value = "";
-};
+// recalcula ao digitar
+document.getElementById('faturamento')
+    .addEventListener('keyup', atualizarMediaMensal);
 </script>
 
 </body>
