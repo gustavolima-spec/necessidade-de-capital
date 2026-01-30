@@ -142,6 +142,16 @@ function formatMoeda(valor) {
     });
 }
 
+function mascaraMoeda(campo) {
+    let valor = campo.value.replace(/\D/g, '');
+    valor = (valor / 100).toFixed(2);
+    valor = valor.replace('.', ',');
+    valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    campo.value = 'R$ ' + valor;
+
+    atualizarMediaMensal();
+}
+
 function atualizarMediaMensal() {
     const faturamento = parseMoeda(document.getElementById('faturamento').value);
     if (faturamento > 0) {
@@ -160,8 +170,6 @@ function calcular() {
         return;
     }
 
-    atualizarMediaMensal();
-
     const necessidade = (faturamento / 360) * prazo;
 
     document.getElementById('necessidade').innerText = formatMoeda(necessidade);
@@ -170,9 +178,11 @@ function calcular() {
     document.getElementById('l30').innerText = formatMoeda(necessidade * 0.30);
 }
 
-// atualiza média ao digitar
+// aplica máscara enquanto digita
 document.getElementById('faturamento')
-    .addEventListener('keyup', atualizarMediaMensal);
+    .addEventListener('input', function () {
+        mascaraMoeda(this);
+    });
 </script>
 
 </body>
